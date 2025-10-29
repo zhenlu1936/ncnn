@@ -12,6 +12,35 @@
 #endif
 #include <stdio.h>
 #include <vector>
+#include <fstream>
+#include <string>
+
+static int load_class_names(const char* filepath, std::vector<std::string>& class_names)
+{
+    std::ifstream file(filepath);
+    if (!file.is_open())
+    {
+        fprintf(stderr, "Failed to open %s\n", filepath);
+        return -1;
+    }
+    
+    std::string line;
+    while (std::getline(file, line))
+    {
+        // Extract class name after the synset id (after the first space)
+        size_t space_pos = line.find(' ');
+        if (space_pos != std::string::npos)
+        {
+            class_names.push_back(line.substr(space_pos + 1));
+        }
+        else
+        {
+            class_names.push_back(line);
+        }
+    }
+    file.close();
+    return 0;
+}
 
 static int detect_squeezenet(const cv::Mat& bgr, std::vector<float>& cls_scores)
 {
@@ -46,7 +75,7 @@ static int detect_squeezenet(const cv::Mat& bgr, std::vector<float>& cls_scores)
     return 0;
 }
 
-static int print_topk(const std::vector<float>& cls_scores, int topk)
+static int print_topk(const std::vector<float>& cls_scores, int topk, const std::vector<std::string>& class_names)
 {
     // partial sort topk with index
     int size = cls_scores.size();
@@ -60,12 +89,20 @@ static int print_topk(const std::vector<float>& cls_scores, int topk)
     std::partial_sort(vec.begin(), vec.begin() + topk, vec.end(),
                       std::greater<std::pair<float, int> >());
 
-    // print topk and score
+    // print topk and score with class names
     for (int i = 0; i < topk; i++)
     {
         float score = vec[i].first;
         int index = vec[i].second;
-        fprintf(stderr, "%d = %f\n", index, score);
+        
+        if (index < (int)class_names.size())
+        {
+            fprintf(stderr, "%d = %f  %s\n", index, score, class_names[index].c_str());
+        }
+        else
+        {
+            fprintf(stderr, "%d = %f\n", index, score);
+        }
     }
 
     return 0;
@@ -88,10 +125,17 @@ int main(int argc, char** argv)
         return -1;
     }
 
+    // Load class names from synset_words.txt
+    std::vector<std::string> class_names;
+    if (load_class_names("synset_words.txt", class_names) != 0)
+    {
+        fprintf(stderr, "Failed to load class names, using indices only\n");
+    }
+
     std::vector<float> cls_scores;
     detect_squeezenet(m, cls_scores);
 
-    print_topk(cls_scores, 3);
+    print_topk(cls_scores, 3, class_names);
 
     return 0;
 }
