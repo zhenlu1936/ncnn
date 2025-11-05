@@ -1,6 +1,7 @@
 // Copyright 2020 Tencent
 // SPDX-License-Identifier: BSD-3-Clause
 
+#include "zhenlu_log.h"
 #include "command.h"
 
 #if NCNN_VULKAN
@@ -1907,6 +1908,7 @@ int VkCompute::submit_and_wait()
         submitInfo.signalSemaphoreCount = 0;
         submitInfo.pSignalSemaphores = 0;
 
+        ZHENLU_LOG_INFO("Vulkan command submited");
         VkResult ret = vkQueueSubmit(compute_queue, 1, &submitInfo, d->compute_command_fence);
         if (ret != VK_SUCCESS)
         {
