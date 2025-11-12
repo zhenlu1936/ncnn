@@ -348,6 +348,7 @@ VkCompute::~VkCompute()
 void VkCompute::record_upload(const Mat& src, VkMat& dst, const Option& opt)
 {
     // NCNN_LOGE("record_upload buffer");
+    ZHENLU_LOG_INFO("record_upload: uploading buffer data to VkCompute");
 
     Mat src_fp16;
     if (src.elemsize == src.elempack * 4u)
@@ -418,6 +419,7 @@ void VkCompute::record_upload(const Mat& src, VkMat& dst, const Option& opt)
 void VkCompute::record_download(const VkMat& src, Mat& dst, const Option& opt)
 {
     // NCNN_LOGE("record_download buffer");
+    ZHENLU_LOG_INFO("record_download: downloading buffer data from VkCompute");
 
     // resolve dst_elempack
     int dims = src.dims;
@@ -485,6 +487,9 @@ void VkCompute::record_download(const VkMat& src, Mat& dst, const Option& opt)
             r.buffer_barrers.barriers = barriers;
             d->delayed_records.push_back(r);
         }
+
+        ZHENLU_LOGF_IF(vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_download: direct recording completed, src_stage=%d dst_stage=%d", src_stage, dst_stage);
+        ZHENLU_LOGF_IF(!vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_download: delayed recording completed, src_stage=%d dst_stage=%d", src_stage, dst_stage);
 
         // mark device host-read @ any
         dst_staging.data->access_flags = VK_ACCESS_HOST_READ_BIT;
@@ -646,6 +651,9 @@ void VkCompute::record_clone(const VkMat& src, Mat& dst, const Option& opt)
             d->delayed_records.push_back(r);
         }
 
+        ZHENLU_LOGF_IF(vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_clone: direct recording completed, src_stage=%d dst_stage=%d", src_stage, dst_stage);
+        ZHENLU_LOGF_IF(!vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_clone: delayed recording completed, src_stage=%d dst_stage=%d", src_stage, dst_stage);
+
         // mark device host-read @ any
         src.data->access_flags = VK_ACCESS_HOST_READ_BIT;
         src.data->stage_flags = VK_PIPELINE_STAGE_HOST_BIT;
@@ -723,6 +731,9 @@ void VkCompute::record_clone(const VkMat& src, VkMat& dst, const Option& opt)
             d->delayed_records.push_back(r);
         }
 
+        ZHENLU_LOGF_IF(vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_clone: direct recording completed, src_stage=%d dst_stage=%d", src_stage, dst_stage);
+        ZHENLU_LOGF_IF(!vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_clone: delayed recording completed, src_stage=%d dst_stage=%d", src_stage, dst_stage);
+
         // mark device transfer-read @ transfer
         src.data->access_flags = VK_ACCESS_TRANSFER_READ_BIT;
         src.data->stage_flags = VK_PIPELINE_STAGE_TRANSFER_BIT;
@@ -759,6 +770,9 @@ void VkCompute::record_clone(const VkMat& src, VkMat& dst, const Option& opt)
             r.copy_buffer.regions = regions;
             d->delayed_records.push_back(r);
         }
+
+        ZHENLU_LOGF_IF(vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_clone: direct recording buffer-to-buffer completed, src=%p dst=%p", src.buffer(), dst.buffer());
+        ZHENLU_LOGF_IF(!vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_clone: delayed recording buffer-to-buffer completed, src=%p dst=%p", src.buffer(), dst.buffer());
     }
 }
 
@@ -810,6 +824,9 @@ void VkCompute::record_clone(const VkImageMat& src, VkImageMat& dst, const Optio
             d->delayed_records.push_back(r);
         }
 
+        ZHENLU_LOGF_IF(vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_clone: direct recording completed, src_stage=%d dst_stage=%d", src_stage, dst_stage);
+        ZHENLU_LOGF_IF(!vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_clone: delayed recording completed, src_stage=%d dst_stage=%d", src_stage, dst_stage);
+
         // mark image transfer-src-optimal @ compute
         src.data->access_flags = VK_ACCESS_TRANSFER_READ_BIT;
         src.data->image_layout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
@@ -853,6 +870,9 @@ void VkCompute::record_clone(const VkImageMat& src, VkImageMat& dst, const Optio
             r.image_barrers.barriers = barriers;
             d->delayed_records.push_back(r);
         }
+
+        ZHENLU_LOGF_IF(vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_clone: direct recording completed, src_stage=%d dst_stage=%d", src_stage, dst_stage);
+        ZHENLU_LOGF_IF(!vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_clone: delayed recording completed, src_stage=%d dst_stage=%d", src_stage, dst_stage);
 
         // mark image transfer-dst-optimal @ compute
         dst.data->access_flags = VK_ACCESS_TRANSFER_WRITE_BIT;
@@ -899,6 +919,9 @@ void VkCompute::record_clone(const VkImageMat& src, VkImageMat& dst, const Optio
             r.copy_image.regions = regions;
             d->delayed_records.push_back(r);
         }
+
+        ZHENLU_LOGF_IF(vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_clone: direct recording completed, image copy executed");
+        ZHENLU_LOGF_IF(!vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_clone: delayed recording completed, image copy queued");
     }
 
     // image and imageview can not be destroyed until command execution ends
@@ -951,6 +974,9 @@ void VkCompute::record_clone(const VkMat& src, VkImageMat& dst, const Option& op
             d->delayed_records.push_back(r);
         }
 
+        ZHENLU_LOGF_IF(vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_clone: direct recording completed, buffer barrier applied");
+        ZHENLU_LOGF_IF(!vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_clone: delayed recording completed, buffer barrier queued");
+
         // mark device transfer-read @ compute
         src.data->access_flags = VK_ACCESS_TRANSFER_READ_BIT;
         src.data->stage_flags = VK_PIPELINE_STAGE_TRANSFER_BIT;
@@ -993,6 +1019,9 @@ void VkCompute::record_clone(const VkMat& src, VkImageMat& dst, const Option& op
             r.image_barrers.barriers = barriers;
             d->delayed_records.push_back(r);
         }
+
+        ZHENLU_LOGF_IF(vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_clone: direct recording completed, src_stage=%d dst_stage=%d", src_stage, dst_stage);
+        ZHENLU_LOGF_IF(!vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_clone: delayed recording completed, src_stage=%d dst_stage=%d", src_stage, dst_stage);
 
         // mark image transfer-dst-optimal @ compute
         dst.data->access_flags = VK_ACCESS_TRANSFER_WRITE_BIT;
@@ -1061,6 +1090,9 @@ void VkCompute::record_clone(const VkMat& src, VkImageMat& dst, const Option& op
             r.copy_buffer_to_image.regions = regions;
             d->delayed_records.push_back(r);
         }
+
+        ZHENLU_LOGF_IF(vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_clone: direct recording completed, buffer-to-image copy executed");
+        ZHENLU_LOGF_IF(!vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_clone: delayed recording completed, buffer-to-image copy queued");
     }
 
     // image and imageview can not be destroyed until command execution ends
@@ -1115,6 +1147,9 @@ void VkCompute::record_clone(const VkImageMat& src, VkMat& dst, const Option& op
             r.image_barrers.barriers = barriers;
             d->delayed_records.push_back(r);
         }
+
+        ZHENLU_LOGF_IF(vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_clone: direct recording completed, src_stage=%d dst_stage=%d", src_stage, dst_stage);
+        ZHENLU_LOGF_IF(!vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_clone: delayed recording completed, src_stage=%d dst_stage=%d", src_stage, dst_stage);
 
         // mark image transfer-src-optimal @ compute
         src.data->access_flags = VK_ACCESS_TRANSFER_READ_BIT;
@@ -1191,6 +1226,9 @@ void VkCompute::record_clone(const VkImageMat& src, VkMat& dst, const Option& op
             r.copy_image_to_buffer.regions = regions;
             d->delayed_records.push_back(r);
         }
+
+        ZHENLU_LOGF_IF(vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_clone: direct recording completed, image-to-buffer copy executed");
+        ZHENLU_LOGF_IF(!vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_clone: delayed recording completed, image-to-buffer copy queued");
     }
 
     // image and imageview can not be destroyed until command execution ends
@@ -1316,6 +1354,13 @@ void VkCompute::record_pipeline(const Pipeline* pipeline, const std::vector<VkMa
             r.bind_pipeline.pipeline = pipeline->pipeline();
             d->delayed_records.push_back(r);
         }
+
+        ZHENLU_LOGF_IF(vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_pipeline: direct recording bind pipeline completed, pipeline=%p buffers=%d images=%d constants=%d dispatcher=%dx%dx%d",
+                       pipeline->pipeline(), buffer_binding_count, image_binding_count, constant_count,
+                       dispatcher.w, dispatcher.h, dispatcher.d);
+        ZHENLU_LOGF_IF(!vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_pipeline: delayed recording bind pipeline completed, pipeline=%p buffers=%d images=%d constants=%d dispatcher=%dx%dx%d",
+                       pipeline->pipeline(), buffer_binding_count, image_binding_count, constant_count,
+                       dispatcher.w, dispatcher.h, dispatcher.d);
     }
 
     // record update bindings
@@ -1488,6 +1533,9 @@ void VkCompute::record_pipeline(const Pipeline* pipeline, const std::vector<VkMa
             r.bind_descriptorsets.descriptorset_offset = d->descriptorsets.size() - 1;
             d->delayed_records.push_back(r);
         }
+
+        ZHENLU_LOGF_IF(vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_pipeline: direct recording updated %d descriptor bindings", binding_count);
+        ZHENLU_LOGF_IF(!vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_pipeline: delayed recording updated %d descriptor bindings", binding_count);
     }
 
     // record push constants
@@ -1512,6 +1560,9 @@ void VkCompute::record_pipeline(const Pipeline* pipeline, const std::vector<VkMa
             r.push_constants.values = constant_values;
             d->delayed_records.push_back(r);
         }
+
+        ZHENLU_LOGF_IF(vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_pipeline: direct recording pushed %d push constants", constant_count);
+        ZHENLU_LOGF_IF(!vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_pipeline: delayed recording pushed %d push constants", constant_count);
     }
 
     // record dispatch
@@ -1534,6 +1585,14 @@ void VkCompute::record_pipeline(const Pipeline* pipeline, const std::vector<VkMa
             r.dispatch.group_count_z = group_count_z;
             d->delayed_records.push_back(r);
         }
+
+        ZHENLU_LOGF_IF(vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_pipeline: direct recording completed successfully, pipeline=%p buffers=%d images=%d constants=%d dispatcher=%dx%dx%d",
+                       pipeline, buffer_binding_count, image_binding_count, constant_count,
+                       dispatcher.w, dispatcher.h, dispatcher.c);
+
+        ZHENLU_LOGF_IF(!vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_pipeline: delayed recording completed successfully, pipeline=%p buffers=%d images=%d constants=%d dispatcher=%dx%dx%d",
+                       pipeline, buffer_binding_count, image_binding_count, constant_count,
+                       dispatcher.w, dispatcher.h, dispatcher.c);
     }
 }
 
@@ -1597,6 +1656,9 @@ void VkCompute::record_import_android_hardware_buffer(const ImportAndroidHardwar
             r.image_barrers.barriers = barriers;
             d->delayed_records.push_back(r);
         }
+
+        ZHENLU_LOGF_IF(vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_clone: direct recording completed, image barrier applied", src_stage, dst_stage);
+        ZHENLU_LOGF_IF(!vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_clone: delayed recording completed, image barrier queued", src_stage, dst_stage);
     }
 
     // record bind pipeline
@@ -1614,6 +1676,11 @@ void VkCompute::record_import_android_hardware_buffer(const ImportAndroidHardwar
             r.bind_pipeline.pipeline = pipeline->pipeline();
             d->delayed_records.push_back(r);
         }
+
+        ZHENLU_LOGF_IF(vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_import_android_hardware_buffer: direct recording bind pipeline completed, pipeline=%p",
+                       pipeline->pipeline());
+        ZHENLU_LOGF_IF(!vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_import_android_hardware_buffer: delayed recording bind pipeline completed, pipeline=%p",
+                       pipeline->pipeline());
     }
 
     // record update bindings
@@ -1754,6 +1821,9 @@ void VkCompute::record_import_android_hardware_buffer(const ImportAndroidHardwar
             r.bind_descriptorsets.descriptorset_offset = d->descriptorsets.size() - 1;
             d->delayed_records.push_back(r);
         }
+
+        ZHENLU_LOGF_IF(vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_import_android_hardware_buffer: direct recording updated descriptor bindings");
+        ZHENLU_LOGF_IF(!vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_import_android_hardware_buffer: delayed recording updated descriptor bindings");
     }
 
     // record dispatch
@@ -1776,6 +1846,11 @@ void VkCompute::record_import_android_hardware_buffer(const ImportAndroidHardwar
             r.dispatch.group_count_z = group_count_z;
             d->delayed_records.push_back(r);
         }
+
+        ZHENLU_LOGF_IF(vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_import_android_hardware_buffer: direct recording completed successfully, pipeline=%p dispatcher=%dx%dx%d",
+                       pipeline, dst.w, dst.h, dst.c);
+        ZHENLU_LOGF_IF(!vkdev->info.support_VK_KHR_push_descriptor(), INFO, "record_import_android_hardware_buffer: delayed recording completed successfully, pipeline=%p dispatcher=%dx%dx%d",
+                       pipeline, dst.w, dst.h, dst.c);
     }
 }
 #endif // __ANDROID_API__ >= 26
@@ -1799,6 +1874,8 @@ int VkCompute::submit_and_wait()
         // handle delayed records
         for (size_t i = 0; i < record_count; i++)
         {
+            ZHENLU_LOGF_INFO("submit_and_wait: processing delayed record %d / %d", i + 1, record_count);
+
             const VkComputePrivate::record& r = d->delayed_records[i];
 
             switch (r.type)
@@ -1840,7 +1917,7 @@ int VkCompute::submit_and_wait()
             case VkComputePrivate::record::TYPE_push_constants:
             {
                 vkCmdPushConstants(r.command_buffer, r.push_constants.pipeline_layout, r.push_constants.stage_flags, 0, r.push_constants.size, r.push_constants.values);
-                delete[](unsigned char*) r.push_constants.values;
+                delete[] (unsigned char*)r.push_constants.values;
                 break;
             }
             case VkComputePrivate::record::TYPE_dispatch:
@@ -1908,8 +1985,8 @@ int VkCompute::submit_and_wait()
         submitInfo.signalSemaphoreCount = 0;
         submitInfo.pSignalSemaphores = 0;
 
-        ZHENLU_LOG_INFO("Vulkan command submited");
         VkResult ret = vkQueueSubmit(compute_queue, 1, &submitInfo, d->compute_command_fence);
+        ZHENLU_LOG_INFO("submit_and_wait: Vulkan command submitted successfully");
         if (ret != VK_SUCCESS)
         {
             NCNN_LOGE("vkQueueSubmit failed %d", ret);
@@ -2127,6 +2204,9 @@ void VkCompute::barrier_readwrite(const VkMat& binding)
             d->delayed_records.push_back(r);
         }
 
+        ZHENLU_LOGF_IF(vkdev->info.support_VK_KHR_push_descriptor(), INFO, "barrier_readwrite: direct recording applied memory barrier to buffer %p", binding.buffer());
+        ZHENLU_LOGF_IF(!vkdev->info.support_VK_KHR_push_descriptor(), INFO, "barrier_readwrite: delayed recording applied memory barrier to buffer %p", binding.buffer());
+
         // mark device shader-readwrite @ compute
         binding.data->access_flags = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT;
         binding.data->stage_flags = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
@@ -2174,11 +2254,17 @@ void VkCompute::barrier_readwrite(const VkImageMat& binding)
             d->delayed_records.push_back(r);
         }
 
+        ZHENLU_LOGF_IF(vkdev->info.support_VK_KHR_push_descriptor(), INFO, "barrier_readwrite: direct recording applied memory barrier to image %p", binding.image());
+        ZHENLU_LOGF_IF(!vkdev->info.support_VK_KHR_push_descriptor(), INFO, "barrier_readwrite: delayed recording applied memory barrier to image %p", binding.image());
+
         // mark image shader-write @ compute
         binding.data->access_flags = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT;
         binding.data->image_layout = VK_IMAGE_LAYOUT_GENERAL;
         binding.data->stage_flags = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
     }
+
+    ZHENLU_LOGF_IF(vkdev->info.support_VK_KHR_push_descriptor(), INFO, "barrier_readwrite: direct recording applied memory barrier to image %p", binding.image());
+    ZHENLU_LOGF_IF(!vkdev->info.support_VK_KHR_push_descriptor(), INFO, "barrier_readwrite: delayed recording applied memory barrier to image %p", binding.image());
 }
 
 void VkCompute::barrier_readonly(const VkImageMat& binding)
@@ -2222,11 +2308,17 @@ void VkCompute::barrier_readonly(const VkImageMat& binding)
             d->delayed_records.push_back(r);
         }
 
+        ZHENLU_LOGF_IF(vkdev->info.support_VK_KHR_push_descriptor(), INFO, "barrier_readonly: direct recording applied read-only barrier to image %p", binding.image());
+        ZHENLU_LOGF_IF(!vkdev->info.support_VK_KHR_push_descriptor(), INFO, "barrier_readonly: delayed recording applied read-only barrier to image %p", binding.image());
+
         // mark image shader-readonly-optimal @ compute
         binding.data->access_flags = VK_ACCESS_SHADER_READ_BIT;
         binding.data->image_layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
         binding.data->stage_flags = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
     }
+
+    ZHENLU_LOGF_IF(vkdev->info.support_VK_KHR_push_descriptor(), INFO, "barrier_readonly: direct recording applied read-only barrier to image %p", binding.image());
+    ZHENLU_LOGF_IF(!vkdev->info.support_VK_KHR_push_descriptor(), INFO, "barrier_readonly: delayed recording applied read-only barrier to image %p", binding.image());
 }
 
 class VkTransferPrivate
@@ -2590,6 +2682,7 @@ void VkTransfer::record_upload(const Mat& src, VkMat& dst, const Option& opt, bo
         region.size = std::min(dst_staging.buffer_capacity(), dst.buffer_capacity());
 
         vkCmdCopyBuffer(command_buffer, dst_staging.buffer(), dst.buffer(), 1, &region);
+        ZHENLU_LOG_INFO("record_upload: executed vkCmdCopyBuffer for VkTransfer");
     }
 
     if (vkdev->info.unified_compute_transfer_queue())

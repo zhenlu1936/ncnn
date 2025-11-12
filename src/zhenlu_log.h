@@ -9,6 +9,10 @@
 #include <iomanip>
 #include <mutex>
 #include <cstring>
+#include <cstdarg>
+#include <vector>
+
+namespace Zhenlu {
 
 // Log levels
 enum class LogLevel {
@@ -25,10 +29,7 @@ namespace LogColors {
     const std::string RED = "\033[31m";
     const std::string GREEN = "\033[32m";
     const std::string YELLOW = "\033[33m";
-    const std::string BLUE = "\033[34m";
-    const std::string MAGENTA = "\033[35m";
     const std::string CYAN = "\033[36m";
-    const std::string WHITE = "\033[37m";
     const std::string BOLD = "\033[1m";
 }
 
@@ -156,6 +157,33 @@ public:
         }
     }
 
+    // Printf-style logging function
+    static void logf(LogLevel level, const std::string& file, int line, const char* format, ...) {
+        if (level < get_current_level()) return;
+        
+        va_list args;
+        va_start(args, format);
+        
+        // Calculate required buffer size
+        va_list args_copy;
+        va_copy(args_copy, args);
+        int size = vsnprintf(nullptr, 0, format, args_copy) + 1;
+        va_end(args_copy);
+        
+        if (size <= 1) {
+            va_end(args);
+            return;
+        }
+        
+        // Format the message
+        std::vector<char> buffer(size);
+        vsnprintf(buffer.data(), size, format, args);
+        va_end(args);
+        
+        std::string message(buffer.data());
+        log(level, message, file, line);
+    }
+
     static void close() {
         std::lock_guard<std::mutex> lock(get_mutex());
         if (get_log_file().is_open()) {
@@ -171,77 +199,60 @@ private:
     std::string name;
 
 public:
-    Timer(const std::string& timer_name = "") : name(timer_name) {
-        start();
-    }
-
-    void start() {
+    explicit Timer(const std::string& timer_name = "") : name(timer_name) {
         start_time = std::chrono::steady_clock::now();
     }
 
     double elapsed_ms() const {
         auto end_time = std::chrono::steady_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(
-            end_time - start_time);
-        return duration.count() / 1000.0;
-    }
-
-    double elapsed_seconds() const {
-        return elapsed_ms() / 1000.0;
+        return std::chrono::duration_cast<std::chrono::microseconds>(
+            end_time - start_time).count() / 1000.0;
     }
 
     void log_elapsed(LogLevel level = LogLevel::INFO) const {
-        if (!name.empty()) {
-            Logger::log(level, name + " took " + std::to_string(elapsed_ms()) + " ms");
-        } else {
-            Logger::log(level, "Timer elapsed: " + std::to_string(elapsed_ms()) + " ms");
-        }
+        std::string msg = name.empty() ? "Timer elapsed" : name + " took";
+        Logger::log(level, msg + ": " + std::to_string(elapsed_ms()) + " ms");
     }
 
     ~Timer() {
-        if (!name.empty()) {
-            log_elapsed();
-        }
+        if (!name.empty()) log_elapsed();
     }
 };
 
 // Convenience macros with stream support
-#define ZHENLU_LOG_DEBUG(msg) do { \
+#define ZHENLU_LOG(level, msg) do { \
     std::stringstream ss; ss << msg; \
-    Logger::log(LogLevel::DEBUG, ss.str(), __FILE__, __LINE__); \
+    Zhenlu::Logger::log(Zhenlu::LogLevel::level, ss.str(), __FILE__, __LINE__); \
 } while(0)
 
-#define ZHENLU_LOG_INFO(msg) do { \
-    std::stringstream ss; ss << msg; \
-    Logger::log(LogLevel::INFO, ss.str(), __FILE__, __LINE__); \
-} while(0)
+#define ZHENLU_LOG_DEBUG(msg)   ZHENLU_LOG(DEBUG, msg)
+#define ZHENLU_LOG_INFO(msg)    ZHENLU_LOG(INFO, msg)
+#define ZHENLU_LOG_WARNING(msg) ZHENLU_LOG(WARNING, msg)
+#define ZHENLU_LOG_ERROR(msg)   ZHENLU_LOG(ERROR, msg)
+#define ZHENLU_LOG_FATAL(msg)   ZHENLU_LOG(FATAL, msg)
 
-#define ZHENLU_LOG_WARNING(msg) do { \
-    std::stringstream ss; ss << msg; \
-    Logger::log(LogLevel::WARNING, ss.str(), __FILE__, __LINE__); \
-} while(0)
+// Printf-style convenience macros
+#define ZHENLU_LOGF(level, format, ...) \
+    Zhenlu::Logger::logf(Zhenlu::LogLevel::level, __FILE__, __LINE__, format, ##__VA_ARGS__)
 
-#define ZHENLU_LOG_ERROR(msg) do { \
-    std::stringstream ss; ss << msg; \
-    Logger::log(LogLevel::ERROR, ss.str(), __FILE__, __LINE__); \
-} while(0)
+#define ZHENLU_LOGF_DEBUG(format, ...)   ZHENLU_LOGF(DEBUG, format, ##__VA_ARGS__)
+#define ZHENLU_LOGF_INFO(format, ...)    ZHENLU_LOGF(INFO, format, ##__VA_ARGS__)
+#define ZHENLU_LOGF_WARNING(format, ...) ZHENLU_LOGF(WARNING, format, ##__VA_ARGS__)
+#define ZHENLU_LOGF_ERROR(format, ...)   ZHENLU_LOGF(ERROR, format, ##__VA_ARGS__)
+#define ZHENLU_LOGF_FATAL(format, ...)   ZHENLU_LOGF(FATAL, format, ##__VA_ARGS__)
 
-#define ZHENLU_LOG_FATAL(msg) do { \
-    std::stringstream ss; ss << msg; \
-    Logger::log(LogLevel::FATAL, ss.str(), __FILE__, __LINE__); \
-} while(0)
-
-// Conditional logging macro
+// Conditional logging macros
 #define ZHENLU_LOG_IF(condition, level, msg) do { \
-    if (condition) { \
-        std::stringstream ss; ss << msg; \
-        Logger::log(level, ss.str(), __FILE__, __LINE__); \
-    } \
+    if (condition) ZHENLU_LOG(level, msg); \
+} while(0)
+
+#define ZHENLU_LOGF_IF(condition, level, format, ...) do { \
+    if (condition) ZHENLU_LOGF(level, format, ##__VA_ARGS__); \
 } while(0)
 
 // Timer macros
-#define ZHENLU_SCOPED_TIMER(name) Timer scoped_timer_##__LINE__(name)
-#define ZHENLU_TIMER_CHECKPOINT(timer_name, checkpoint_name) \
-    Timer::log(LogLevel::INFO, std::string(timer_name) + " checkpoint " + checkpoint_name + ": " + std::to_string(timer_name.elapsed_ms()) + " ms")
+#define ZHENLU_SCOPED_TIMER(name) Zhenlu::Timer scoped_timer_##__LINE__(name)
+
+} // namespace Zhenlu
 
 #endif // ZHENLU_LOG_H
