@@ -1,3 +1,5 @@
+#!/bin/bash
+
 cd ../build
 cmake --build . -j 8
 cmake --build . --target install

@@ -1,0 +1,96 @@
+[gfxrecon] INFO - Settings Loader: Found option "GFXRECON_CAPTURE_FILE" with value "/Users/zhenlulu/coding/ncnn/zhenlu/squeezenet/output/records.gfxr"
+[gfxrecon] INFO - Settings Loader: Found option "GFXRECON_CAPTURE_FILE_TIMESTAMP" with value "false"
+[gfxrecon] INFO - Settings Loader: Found option "GFXRECON_LOG_FILE" with value "/Users/zhenlulu/coding/ncnn/zhenlu/squeezenet/output/record.log"
+[gfxrecon] INFO - Settings Loader: Found option "GFXRECON_LOG_LEVEL" with value "debug"
+[gfxrecon] DEBUG - Settings Loader: Found option "lunarg_gfxreconstruct.capture_file" with value "/Users/zhenlulu/coding/ncnn/zhenlu/squeezenet/output/records.gfxr"
+[gfxrecon] DEBUG - Settings Loader: Found option "lunarg_gfxreconstruct.capture_file_timestamp" with value "false"
+[gfxrecon] DEBUG - Settings Loader: Found option "lunarg_gfxreconstruct.log_file" with value "/Users/zhenlulu/coding/ncnn/zhenlu/squeezenet/output/record.log"
+[gfxrecon] DEBUG - Settings Loader: Found option "lunarg_gfxreconstruct.log_level" with value "debug"
+[gfxrecon] INFO - Initializing GFXReconstruct capture layer
+[gfxrecon] INFO -   GFXReconstruct Version 1.0.5 (614fbd3) RelWithDebInfo
+[gfxrecon] INFO - Recording graphics API capture to /Users/zhenlulu/coding/ncnn/zhenlu/squeezenet/output/records.gfxr
+[gfxrecon] DEBUG - CommonCaptureManager::CreateInstance(): Current instance count is 1
+[gfxrecon] INFO -   Vulkan Header Version 1.4.328
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0xa000000000a's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0xf000000000f's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x140000000014's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x190000000019's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x1e000000001e's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x230000000023's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x280000000028's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x2d000000002d's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x320000000032's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x370000000037's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x3c000000003c's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x410000000041's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x460000000046's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x4b000000004b's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x500000000050's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x550000000055's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x5a000000005a's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x5f000000005f's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x640000000064's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x690000000069's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x6e000000006e's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x730000000073's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x780000000078's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x7d000000007d's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x820000000082's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x870000000087's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x8c000000008c's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x910000000091's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x960000000096's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x9b000000009b's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0xa000000000a0's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0xa500000000a5's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0xaa00000000aa's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0xaf00000000af's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0xb400000000b4's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0xb900000000b9's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0xbe00000000be's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0xc300000000c3's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0xc800000000c8's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0xcd00000000cd's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0xd200000000d2's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0xd700000000d7's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0xdc00000000dc's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0xe100000000e1's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0xe600000000e6's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0xeb00000000eb's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0xf000000000f0's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0xf500000000f5's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0xfa00000000fa's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0xff00000000ff's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x1040000000104's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x1090000000109's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x10e000000010e's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x1130000000113's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x1180000000118's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x11d000000011d's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x1220000000122's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x1270000000127's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x12c000000012c's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x1310000000131's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x1360000000136's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x13b000000013b's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x1400000000140's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x1450000000145's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x14a000000014a's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x14f000000014f's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x1540000000154's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x1590000000159's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x15e000000015e's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x1630000000163's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x1680000000168's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x16d000000016d's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x1720000000172's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x1770000000177's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x17c000000017c's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x1810000000181's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x18e000000018e's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x1930000000193's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x1980000000198's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x1a100000001a1's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x1a600000001a6's wrapper. It might have been destroyed
+[gfxrecon] WARNING - vulkan_wrappers::GetWrappedId() couldn't find Handle: 0x1ab00000001ab's wrapper. It might have been destroyed
+[gfxrecon] DEBUG - CommonCaptureManager::DestroyInstance(): Current instance count is 0

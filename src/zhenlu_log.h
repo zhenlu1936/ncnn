@@ -219,6 +219,31 @@ public:
     }
 };
 
+// Logging control switches
+#if defined(ZHENLU_LOG_OFF)
+    // When ZHENLU_LOG_OFF is defined, all logging macros are disabled
+    #define ZHENLU_LOG(level, msg) do { } while(0)
+    #define ZHENLU_LOG_DEBUG(msg)   do { } while(0)
+    #define ZHENLU_LOG_INFO(msg)    do { } while(0)
+    #define ZHENLU_LOG_WARNING(msg) do { } while(0)
+    #define ZHENLU_LOG_ERROR(msg)   do { } while(0)
+    #define ZHENLU_LOG_FATAL(msg)   do { } while(0)
+    
+    #define ZHENLU_LOGF(level, format, ...) do { } while(0)
+    #define ZHENLU_LOGF_DEBUG(format, ...)   do { } while(0)
+    #define ZHENLU_LOGF_INFO(format, ...)    do { } while(0)
+    #define ZHENLU_LOGF_WARNING(format, ...) do { } while(0)
+    #define ZHENLU_LOGF_ERROR(format, ...)   do { } while(0)
+    #define ZHENLU_LOGF_FATAL(format, ...)   do { } while(0)
+    
+    #define ZHENLU_LOG_IF(condition, level, msg) do { } while(0)
+    #define ZHENLU_LOGF_IF(condition, level, format, ...) do { } while(0)
+    
+    #define ZHENLU_SCOPED_TIMER(name) do { } while(0)
+
+#elif defined(ZHENLU_LOG_ON) || !defined(ZHENLU_LOG_OFF)
+    // When ZHENLU_LOG_ON is defined or neither switch is defined, logging is enabled (default behavior)
+
 // Convenience macros with stream support
 #define ZHENLU_LOG(level, msg) do { \
     std::stringstream ss; ss << msg; \
@@ -252,6 +277,8 @@ public:
 
 // Timer macros
 #define ZHENLU_SCOPED_TIMER(name) Zhenlu::Timer scoped_timer_##__LINE__(name)
+
+#endif // ZHENLU_LOG_ON || !ZHENLU_LOG_OFF
 
 } // namespace Zhenlu
 

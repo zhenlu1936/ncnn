@@ -1,7 +1,9 @@
 // Copyright 2020 Tencent
 // SPDX-License-Identifier: BSD-3-Clause
 
+#define ZHENLU_LOG_OFF
 #include "zhenlu_log.h"
+
 #include "command.h"
 
 #if NCNN_VULKAN

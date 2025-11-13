@@ -1,0 +1,5 @@
+================== Start timer (Frame: 1) ==================
+[gfxrecon] ERROR - DEBUG MESSENGER: Frame #1: VUID-VkDeviceCreateInfo-pProperties-04451: vkCreateDevice(): VK_KHR_portability_subset must be enabled because physical device VkPhysicalDevice 0x13460f2d0 supports it.
+The Vulkan spec states: If the VK_KHR_portability_subset extension is included in pProperties of vkEnumerateDeviceExtensionProperties, ppEnabledExtensionNames must include "VK_KHR_portability_subset" (https://vulkan.lunarg.com/doc/view/1.4.328.1/mac/antora/spec/latest/chapters/devsandqueues.html#VUID-VkDeviceCreateInfo-pProperties-04451)
+================== End timer (Frame: 1) ==================
+File did not contain any frames
