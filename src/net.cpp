@@ -45,6 +45,9 @@ public:
 #endif // NCNN_VULKAN
 
     int convert_layout(Mat& bottom_blob, const Layer* layer, const Option& opt) const;
+#if NCNN_VULKAN
+    int convert_layout(VkMat& bottom_blob, const Layer* layer, VkCompute& cmd, const Option& opt) const;
+#endif // NCNN_VULKAN
 
     int do_forward_layer(const Layer* layer, std::vector<Mat>& blob_mats, const Option& opt) const;
 #if NCNN_VULKAN
@@ -487,6 +490,12 @@ int NetPrivate::convert_layout(Mat& bottom_blob, const Layer* layer, const Optio
                     dst_elempack = 8;
 #endif
             }
+
+            if (layer->support_any_packing)
+            {
+                // layer handles pack/unpack
+                dst_elempack = bottom_blob.elempack;
+            }
         }
     }
 
@@ -553,6 +562,46 @@ int NetPrivate::convert_layout(Mat& bottom_blob, const Layer* layer, const Optio
 
     return 0;
 }
+
+#if NCNN_VULKAN
+int NetPrivate::convert_layout(VkMat& bottom_blob, const Layer* layer, VkCompute& cmd, const Option& opt) const
+{
+    if (bottom_blob.empty())
+        return 0;
+
+    int dst_elempack = 1;
+    if (layer->support_vulkan_packing)
+    {
+        // resolve dst_elempack
+        int dims = bottom_blob.dims;
+        int elemcount = 0;
+        if (dims == 1) elemcount = bottom_blob.elempack * bottom_blob.w;
+        if (dims == 2) elemcount = bottom_blob.elempack * bottom_blob.h;
+        if (dims == 3 || dims == 4) elemcount = bottom_blob.elempack * bottom_blob.c;
+
+        if (elemcount % 4 == 0)
+            dst_elempack = 4;
+
+        if (layer->support_vulkan_any_packing)
+        {
+            // layer handles pack/unpack
+            dst_elempack = bottom_blob.elempack;
+        }
+    }
+
+    if (bottom_blob.elempack != dst_elempack)
+    {
+        VkMat bottom_blob_packed;
+        vkdev->convert_packing(bottom_blob, bottom_blob_packed, dst_elempack, cmd, opt);
+        bottom_blob = bottom_blob_packed;
+
+        if (bottom_blob.empty())
+            return -100;
+    }
+
+    return 0;
+}
+#endif // NCNN_VULKAN
 
 int NetPrivate::do_forward_layer(const Layer* layer, std::vector<Mat>& blob_mats, const Option& opt) const
 {
@@ -714,6 +763,10 @@ int NetPrivate::do_forward_layer(const Layer* layer, std::vector<VkMat>& blob_ma
             bottom_blob = bottom_blob_ref;
         }
 
+        int ret = convert_layout(bottom_blob, layer, cmd, opt);
+        if (ret != 0)
+            return ret;
+
         // forward
         if (opt.lightmode && layer->support_inplace)
         {
@@ -766,6 +819,10 @@ int NetPrivate::do_forward_layer(const Layer* layer, std::vector<VkMat>& blob_ma
             {
                 bottom_blobs[i] = bottom_blob_ref;
             }
+
+            int ret = convert_layout(bottom_blobs[i], layer, cmd, opt);
+            if (ret != 0)
+                return ret;
         }
 
         // forward
@@ -1150,7 +1207,9 @@ int Net::load_param(const DataReader& dr)
         if (pdlr != 0)
         {
             NCNN_LOGE("ParamDict load_param %d %s failed", i, layer_name);
-            continue;
+            delete layer;
+            clear();
+            return -1;
         }
 
         // pull out top shape hints
@@ -1200,7 +1259,9 @@ int Net::load_param(const DataReader& dr)
         if (lr != 0)
         {
             NCNN_LOGE("layer load_param %d %s failed", i, layer_name);
-            continue;
+            delete layer;
+            clear();
+            return -1;
         }
 
         if (layer->support_int8_storage)
@@ -1226,6 +1287,7 @@ int Net::load_param(const DataReader& dr)
             if (!layer_cpu)
             {
                 NCNN_LOGE("layer %s not exists or registered", layer_type);
+                delete layer;
                 clear();
                 return -1;
             }
@@ -1242,7 +1304,10 @@ int Net::load_param(const DataReader& dr)
             if (lr != 0)
             {
                 NCNN_LOGE("layer load_param %d %s failed", i, layer_name);
-                continue;
+                delete layer;
+                delete layer_cpu;
+                clear();
+                return -1;
             }
 
             delete layer;
@@ -1432,7 +1497,9 @@ int Net::load_param_bin(const DataReader& dr)
         if (pdlr != 0)
         {
             NCNN_LOGE("ParamDict load_param_bin %d failed", i);
-            continue;
+            delete layer;
+            clear();
+            return -1;
         }
 
         // pull out top blob shape hints
@@ -1482,7 +1549,9 @@ int Net::load_param_bin(const DataReader& dr)
         if (lr != 0)
         {
             NCNN_LOGE("layer load_param %d failed", i);
-            continue;
+            delete layer;
+            clear();
+            return -1;
         }
 
         if (layer->support_int8_storage)
@@ -1509,6 +1578,7 @@ int Net::load_param_bin(const DataReader& dr)
             if (!layer_cpu)
             {
                 NCNN_LOGE("layer %d not exists or registered", typeindex);
+                delete layer;
                 clear();
                 return -1;
             }
@@ -1523,7 +1593,10 @@ int Net::load_param_bin(const DataReader& dr)
             if (lr != 0)
             {
                 NCNN_LOGE("layer load_param %d failed", i);
-                continue;
+                delete layer;
+                delete layer_cpu;
+                clear();
+                return -1;
             }
 
             delete layer;
@@ -1793,6 +1866,9 @@ void Net::clear()
     for (size_t i = 0; i < d->layers.size(); i++)
     {
         Layer* layer = d->layers[i];
+
+        if (!layer)
+            continue;
 
         Option opt1 = get_masked_option(opt, layer->featmask);
 
