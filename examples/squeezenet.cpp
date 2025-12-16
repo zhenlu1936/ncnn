@@ -23,7 +23,7 @@ static int load_class_names(const char* filepath, std::vector<std::string>& clas
         fprintf(stderr, "Failed to open %s\n", filepath);
         return -1;
     }
-    
+
     std::string line;
     while (std::getline(file, line))
     {
@@ -95,7 +95,7 @@ static int print_topk(const std::vector<float>& cls_scores, int topk, const std:
     {
         float score = vec[i].first;
         int index = vec[i].second;
-        
+
         if (index < (int)class_names.size())
         {
             fprintf(stderr, "%d = %f  %s\n", index, score, class_names[index].c_str());
